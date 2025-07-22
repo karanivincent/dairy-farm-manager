@@ -47,10 +47,11 @@ class ApiClient {
         return response;
       },
       async (error) => {
+        console.error('Axios error:', error);
         const { response, code } = error;
 
         // Handle network errors (offline scenario)
-        if (code === 'ECONNABORTED' || code === 'ERR_NETWORK') {
+        if (code === 'ECONNABORTED' || code === 'ERR_NETWORK' || !response) {
           useUIStore.getState().setOnlineStatus(false);
           throw new Error('Network error - please check your connection');
         }

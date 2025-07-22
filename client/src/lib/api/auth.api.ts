@@ -29,7 +29,15 @@ export const authApi = {
 
   // Register new user
   async register(data: RegisterData): Promise<AuthResponse> {
-    return apiClient.post<AuthResponse>('/auth/register', data);
+    try {
+      console.log('Attempting registration with:', { ...data, password: '[REDACTED]' });
+      console.log('API base URL:', import.meta.env.VITE_API_URL || 'http://localhost:3000/api/v1');
+      const response = await apiClient.post<AuthResponse>('/auth/register', data);
+      return response;
+    } catch (error) {
+      console.error('Registration error details:', error);
+      throw error;
+    }
   },
 
   // Refresh access token
