@@ -35,7 +35,7 @@ console.log();
 
 console.log(colors.blue + '🔧 Backend API (NestJS):' + colors.reset);
 console.log('   ' + colors.yellow + '➜' + colors.reset + ' Local:    ' + colors.cyan + 'http://localhost:3000' + colors.reset);
-console.log('   ' + colors.yellow + '➜' + colors.reset + ' Swagger:  ' + colors.cyan + 'http://localhost:3000/api' + colors.reset);
+console.log('   ' + colors.yellow + '➜' + colors.reset + ' Swagger:  ' + colors.cyan + 'http://localhost:3000/api-docs' + colors.reset);
 console.log();
 
 console.log(colors.blue + '🗄️  Database Tools:' + colors.reset);

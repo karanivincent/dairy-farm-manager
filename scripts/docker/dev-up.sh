@@ -24,7 +24,7 @@ done
 echo "✅ All services are up and running!"
 echo ""
 echo "📍 Service URLs:"
-echo "   PostgreSQL: localhost:5432"
+echo "   PostgreSQL: localhost:5437"
 echo "   Redis: localhost:6379"
 echo "   pgAdmin: http://localhost:5050"
 echo ""
