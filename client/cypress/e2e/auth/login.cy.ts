@@ -90,9 +90,9 @@ describe('Login Flow', () => {
 
   it('should toggle password visibility', () => {
     cy.get('input[name="password"]').should('have.attr', 'type', 'password');
-    cy.get('button[aria-label*="Show password"]').click();
+    cy.get('input[name="password"]').parent().find('button').click();
     cy.get('input[name="password"]').should('have.attr', 'type', 'text');
-    cy.get('button[aria-label*="Hide password"]').click();
+    cy.get('input[name="password"]').parent().find('button').click();
     cy.get('input[name="password"]').should('have.attr', 'type', 'password');
   });
 
