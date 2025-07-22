@@ -24,8 +24,16 @@ async function bootstrap() {
   // Compression
   app.use(compression());
   
-  // CORS
-  app.enableCors(corsConfig);
+  // CORS - Enable with more specific configuration
+  app.enableCors({
+    origin: corsConfig.origin || 'http://localhost:5173',
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'Accept'],
+    exposedHeaders: ['Authorization'],
+    preflightContinue: false,
+    optionsSuccessStatus: 204,
+  });
   
   // Versioning
   app.enableVersioning({
