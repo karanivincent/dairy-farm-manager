@@ -9,6 +9,7 @@ import { validationSchema } from './config/env.validation';
 import { UsersModule } from './modules/users/users.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { CattleModule } from './modules/cattle/cattle.module';
+import { ProductionModule } from './modules/production/production.module';
 
 @Module({
   imports: [
@@ -43,6 +44,7 @@ import { CattleModule } from './modules/cattle/cattle.module';
     UsersModule,
     AuthModule,
     CattleModule,
+    ProductionModule,
   ],
   controllers: [AppController],
   providers: [AppService],
