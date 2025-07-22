@@ -881,11 +881,11 @@ This is the master task list for implementing the Daily Farm Manager PWA system.
 - [ ] Document collection
 
 #### 1.4.3 Testing Setup
-- [ ] Configure Jest for unit tests
+- [x] Configure Jest for unit tests (2025-07-22)
 - [ ] Set up test database
-- [ ] Create test utilities
-- [ ] Write unit tests for all services
-- [ ] Write integration tests for controllers
+- [x] Create test utilities (2025-07-22)
+- [x] Write unit tests for all services (2025-07-22)
+- [x] Write integration tests for controllers (2025-07-22)
 - [ ] Achieve 80% code coverage
 
 ### Phase 1 Completion Checklist
@@ -1422,6 +1422,8 @@ This is the master task list for implementing the Daily Farm Manager PWA system.
 - [x] State management configured (2025-07-22)
 - [ ] Sync engine operational
 - [x] Mobile optimizations applied (2025-07-22)
+- [x] Comprehensive test suite added (34 tests) (2025-07-22)
+- [x] CORS configuration fixed (2025-07-22)
 
 ---
 
@@ -2124,13 +2126,20 @@ This is the master task list for implementing the Daily Farm Manager PWA system.
 Use this section to track important decisions, blockers, and learnings throughout the project.
 
 ### Technical Decisions
-- 
+- Used Vitest instead of Jest for frontend testing due to better Vite integration and faster performance
+- Implemented dynamic CORS origin validation to support multiple environments (localhost:5173, file://, etc.)
 
 ### Blockers & Solutions
-- 
+- **CORS Issues (2025-07-22)**: Frontend-backend communication blocked by CORS
+  - Solution: Updated backend CORS configuration to use dynamic origin validation
+  - Added proper axios configuration with withCredentials: true
+  - Created test HTML files to isolate and debug CORS issues
+  - Fixed API versioning issue (needed /api/v1 prefix)
 
 ### Lessons Learned
-- 
+- Always ensure API versioning is consistent between frontend and backend configurations
+- Browser service workers can interfere with CORS; test with and without them when debugging
+- Using test HTML files outside the React app helps isolate CORS issues
 
 ### Resources & Links
 - 
