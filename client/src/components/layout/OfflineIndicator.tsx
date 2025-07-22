@@ -12,8 +12,10 @@ export function OfflineIndicator() {
     <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50">
       <div className={`
         flex items-center px-4 py-2 rounded-full shadow-lg border text-sm font-medium
-        ${isOnline 
+        ${syncInProgress 
           ? 'bg-blue-50 text-blue-700 border-blue-200' 
+          : isOnline
+          ? 'bg-green-50 text-green-700 border-green-200'
           : 'bg-red-50 text-red-700 border-red-200'
         }
       `}>
