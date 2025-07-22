@@ -8,6 +8,7 @@ import { appConfig, databaseConfig, jwtConfig, redisConfig } from './config';
 import { validationSchema } from './config/env.validation';
 import { UsersModule } from './modules/users/users.module';
 import { AuthModule } from './modules/auth/auth.module';
+import { CattleModule } from './modules/cattle/cattle.module';
 
 @Module({
   imports: [
@@ -41,6 +42,7 @@ import { AuthModule } from './modules/auth/auth.module';
     // Feature modules
     UsersModule,
     AuthModule,
+    CattleModule,
   ],
   controllers: [AppController],
   providers: [AppService],
