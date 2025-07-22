@@ -1,0 +1,25 @@
+# Dependencies
+node_modules/
+
+# Build outputs
+dist/
+build/
+.next/
+out/
+
+# Configuration
+*.config.js
+*.config.ts
+
+# Testing
+coverage/
+
+# Environment
+.env*
+
+# Generated
+*.min.js
+*.d.ts
+
+# Public assets
+public/

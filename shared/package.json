@@ -1,0 +1,15 @@
+{
+  "name": "@dairy-farm/shared",
+  "version": "1.0.0",
+  "description": "Shared types and utilities for Dairy Farm Manager",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc -w",
+    "clean": "rm -rf dist"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.3"
+  }
+}

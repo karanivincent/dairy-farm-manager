@@ -1,0 +1,13 @@
+# Local development overrides
+version: '3.8'
+
+services:
+  postgres:
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: farm_db_dev
+      
+  redis:
+    ports:
+      - "6379:6379"
