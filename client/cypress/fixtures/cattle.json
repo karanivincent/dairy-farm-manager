@@ -1,0 +1,44 @@
+{
+  "validCattle": {
+    "name": "Bessie",
+    "tagNumber": "COW-001",
+    "breed": "Holstein",
+    "gender": "female",
+    "birthDate": "2020-01-15",
+    "status": "active"
+  },
+  "bulkCattle": [
+    {
+      "name": "Daisy",
+      "tagNumber": "COW-002",
+      "breed": "Jersey",
+      "gender": "female",
+      "birthDate": "2019-06-20",
+      "status": "active"
+    },
+    {
+      "name": "Bruno",
+      "tagNumber": "BULL-001",
+      "breed": "Angus",
+      "gender": "male",
+      "birthDate": "2018-03-10",
+      "status": "active"
+    },
+    {
+      "name": "Bella",
+      "tagNumber": "COW-003",
+      "breed": "Guernsey",
+      "gender": "female",
+      "birthDate": "2021-11-05",
+      "status": "active"
+    }
+  ],
+  "invalidCattle": {
+    "name": "",
+    "tagNumber": "",
+    "breed": "Holstein",
+    "gender": "female",
+    "birthDate": "2020-01-15",
+    "status": "active"
+  }
+}

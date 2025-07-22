@@ -1,0 +1,27 @@
+{
+  "validUser": {
+    "email": "test@example.com",
+    "username": "testuser",
+    "password": "Password123@",
+    "firstName": "Test",
+    "lastName": "User"
+  },
+  "newUser": {
+    "email": "newuser@example.com",
+    "username": "newuser",
+    "password": "NewPassword123@",
+    "firstName": "New",
+    "lastName": "User"
+  },
+  "invalidCredentials": {
+    "emailOrUsername": "wrong@example.com",
+    "password": "WrongPassword123!"
+  },
+  "weakPassword": {
+    "email": "weak@example.com",
+    "username": "weakuser",
+    "password": "weak",
+    "firstName": "Weak",
+    "lastName": "User"
+  }
+}

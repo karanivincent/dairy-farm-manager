@@ -10,7 +10,7 @@ import { authApi } from '../../lib/api';
 import { useAuthStore } from '../../store/auth.store';
 
 const loginSchema = z.object({
-  email: z.string().email('Please enter a valid email address'),
+  emailOrUsername: z.string().min(1, 'Email or username is required'),
   password: z.string().min(6, 'Password must be at least 6 characters'),
 });
 
@@ -36,7 +36,7 @@ export function LoginPage() {
     mutationFn: authApi.login,
     onSuccess: (data) => {
       setUser(data.user);
-      setTokens(data.token, data.refreshToken);
+      setTokens(data.accessToken, data.refreshToken);
       toast.success(`Welcome back, ${data.user.firstName}!`);
       navigate(from, { replace: true });
     },
@@ -64,18 +64,18 @@ export function LoginPage() {
         <form className="mt-8 space-y-6" onSubmit={handleSubmit(onSubmit)}>
           <div className="space-y-4">
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-                Email address
+              <label htmlFor="emailOrUsername" className="block text-sm font-medium text-gray-700">
+                Email or Username
               </label>
               <input
-                {...register('email')}
-                type="email"
-                autoComplete="email"
+                {...register('emailOrUsername')}
+                type="text"
+                autoComplete="username email"
                 className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-green-500 focus:border-green-500"
-                placeholder="Enter your email"
+                placeholder="Enter your email or username"
               />
-              {errors.email && (
-                <p className="mt-1 text-sm text-red-600">{errors.email.message}</p>
+              {errors.emailOrUsername && (
+                <p className="mt-1 text-sm text-red-600">{errors.emailOrUsername.message}</p>
               )}
             </div>
 

@@ -1,0 +1,51 @@
+{
+  "validProduction": {
+    "date": "2024-01-15",
+    "session": "morning",
+    "quantity": 25.5,
+    "notes": "Good production today"
+  },
+  "bulkProduction": [
+    {
+      "cattleId": 1,
+      "quantity": 28.0,
+      "session": "morning"
+    },
+    {
+      "cattleId": 2,
+      "quantity": 22.5,
+      "session": "morning"
+    },
+    {
+      "cattleId": 3,
+      "quantity": 30.0,
+      "session": "morning"
+    }
+  ],
+  "invalidProduction": {
+    "date": "",
+    "session": "morning",
+    "quantity": -5,
+    "notes": "Invalid quantity"
+  },
+  "productionHistory": [
+    {
+      "date": "2024-01-10",
+      "morning": 150.5,
+      "evening": 145.0,
+      "total": 295.5
+    },
+    {
+      "date": "2024-01-11",
+      "morning": 155.0,
+      "evening": 148.5,
+      "total": 303.5
+    },
+    {
+      "date": "2024-01-12",
+      "morning": 152.0,
+      "evening": 146.0,
+      "total": 298.0
+    }
+  ]
+}

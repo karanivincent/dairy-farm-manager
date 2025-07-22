@@ -28,22 +28,33 @@ export class AuthService {
   ) {}
 
   async validateUser(emailOrUsername: string, password: string): Promise<User | null> {
+    console.log('ValidateUser called with:', { emailOrUsername });
+    
     // Check if input is email or username
     const isEmail = emailOrUsername.includes('@');
+    console.log('Is email:', isEmail);
+    
     const user = isEmail
       ? await this.usersService.findByEmail(emailOrUsername)
       : await this.usersService.findByUsername(emailOrUsername);
 
+    console.log('User found:', !!user);
+    
     if (!user) {
+      console.log('User not found');
       return null;
     }
 
+    console.log('Validating password...');
     const isPasswordValid = await user.validatePassword(password);
+    console.log('Password valid:', isPasswordValid);
+    
     if (!isPasswordValid) {
       return null;
     }
 
     if (!user.isActive) {
+      console.log('User is inactive');
       throw new UnauthorizedException('Account is inactive');
     }
 
@@ -51,12 +62,17 @@ export class AuthService {
   }
 
   async login(loginDto: LoginDto): Promise<AuthResponse> {
+    console.log('Login attempt with:', { emailOrUsername: loginDto.emailOrUsername });
+    
     const user = await this.validateUser(loginDto.emailOrUsername, loginDto.password);
     
     if (!user) {
+      console.log('Login failed: Invalid credentials');
       throw new UnauthorizedException('Invalid credentials');
     }
 
+    console.log('Login successful for user:', user.email);
+    
     // Update last login
     await this.usersService.updateLastLogin(user.id);
 

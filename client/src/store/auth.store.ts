@@ -12,7 +12,7 @@ export interface User {
 }
 
 export interface LoginCredentials {
-  email: string;
+  emailOrUsername: string;
   password: string;
 }
 

@@ -41,7 +41,7 @@ export function RegisterPage() {
     mutationFn: authApi.register,
     onSuccess: (data) => {
       setUser(data.user);
-      setTokens(data.token, data.refreshToken);
+      setTokens(data.accessToken, data.refreshToken);
       toast.success(`Welcome, ${data.user.firstName}!`);
       navigate('/', { replace: true });
     },
