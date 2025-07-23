@@ -5,6 +5,8 @@ import { LoginPage } from '../pages/auth/LoginPage';
 import { RegisterPage } from '../pages/auth/RegisterPage';
 import { DashboardPage } from '../pages/DashboardPage';
 import { CattleListPage } from '../pages/cattle/CattleListPage';
+import { AddCattlePage } from '../pages/cattle/AddCattlePage';
+import { CattleDetailPage } from '../pages/cattle/CattleDetailPage';
 import { ProductionListPage } from '../pages/production/ProductionListPage';
 import { NotFoundPage } from '../pages/NotFoundPage';
 
@@ -35,11 +37,11 @@ const router = createBrowserRouter([
       },
       {
         path: 'cattle/add',
-        element: <div>Add Cattle Page (To be implemented)</div>,
+        element: <AddCattlePage />,
       },
       {
         path: 'cattle/:id',
-        element: <div>Cattle Detail Page (To be implemented)</div>,
+        element: <CattleDetailPage />,
       },
       {
         path: 'cattle/:id/edit',
