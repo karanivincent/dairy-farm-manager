@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { cattleApi } from './cattle.api';
 import { apiClient } from './client';
+import type { CattleFilterDto } from '../../types/cattle.types';
 import { CattleStatus, Gender } from '../../types/cattle.types';
 
 // Mock the API client
@@ -63,6 +64,62 @@ describe('CattleApi', () => {
       await cattleApi.getAll(filters);
       
       expect(apiClient.get).toHaveBeenCalledWith('/cattle?status=active');
+    });
+
+    it('should convert sortOrder to uppercase', async () => {
+      const filters = {
+        sortBy: 'name',
+        sortOrder: 'asc',
+        page: 1,
+        limit: 10,
+      };
+      
+      await cattleApi.getAll(filters);
+      
+      expect(apiClient.get).toHaveBeenCalledWith(
+        '/cattle?sortBy=name&sortOrder=ASC&page=1&limit=10'
+      );
+    });
+
+    it('should convert DESC sortOrder to uppercase', async () => {
+      const filters = {
+        sortBy: 'birthDate',
+        sortOrder: 'desc',
+      };
+      
+      await cattleApi.getAll(filters);
+      
+      expect(apiClient.get).toHaveBeenCalledWith(
+        '/cattle?sortBy=birthDate&sortOrder=DESC'
+      );
+    });
+
+    it('should handle mixed case sortOrder values', async () => {
+      const filters = {
+        sortOrder: 'AsC' as any,
+      };
+      
+      await cattleApi.getAll(filters);
+      
+      expect(apiClient.get).toHaveBeenCalledWith('/cattle?sortOrder=ASC');
+    });
+
+    it('should preserve other filter values when converting sortOrder', async () => {
+      const filters = {
+        status: CattleStatus.ACTIVE,
+        gender: Gender.FEMALE,
+        sortBy: 'tagNumber',
+        sortOrder: 'desc',
+        search: 'Test',
+        page: 3,
+        limit: 25,
+      };
+      
+      await cattleApi.getAll(filters);
+      
+      expect(apiClient.get).toHaveBeenCalledWith(
+        '/cattle?status=active&gender=female&sortBy=tagNumber&sortOrder=DESC&search=Test&page=3&limit=25'
+      );
     });
   });
 

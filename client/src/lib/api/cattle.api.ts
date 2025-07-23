@@ -15,7 +15,9 @@ export const cattleApi = {
     if (filters) {
       Object.entries(filters).forEach(([key, value]) => {
         if (value !== undefined && value !== '') {
-          params.append(key, value.toString());
+          // Transform sortOrder to uppercase for backend compatibility
+          const finalValue = key === 'sortOrder' ? value.toString().toUpperCase() : value.toString();
+          params.append(key, finalValue);
         }
       });
     }
