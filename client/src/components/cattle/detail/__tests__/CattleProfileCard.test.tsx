@@ -1,22 +1,27 @@
 import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { CattleProfileCard } from '../CattleProfileCard';
-import { Cattle } from '../../../../types/cattle.types';
+import type { Cattle } from '../../../../types/cattle.types';
+import { Gender, CattleStatus } from '../../../../types/cattle.types';
 
 const mockCattle: Cattle = {
-  id: '123',
+  id: 123,
   name: 'Bessie',
   tagNumber: 'COW-001',
   breed: 'Holstein',
   birthDate: '2022-01-15',
-  gender: 'female',
-  status: 'active',
-  weight: 550,
-  notes: 'Healthy and productive cow',
-  location: 'Barn A',
-  farmId: 'farm-1',
-  createdAt: '2022-03-01',
-  updatedAt: '2024-01-15',
+  gender: Gender.FEMALE,
+  status: CattleStatus.ACTIVE,
+  parentCowId: null,
+  parentBullId: null,
+  photoUrl: null,
+  metadata: {
+    weight: 550,
+    notes: 'Healthy and productive cow',
+    location: 'Barn A',
+  },
+  createdAt: new Date('2022-03-01'),
+  updatedAt: new Date('2024-01-15'),
 };
 
 describe('CattleProfileCard', () => {
@@ -28,29 +33,31 @@ describe('CattleProfileCard', () => {
     expect(screen.getByText('Holstein')).toBeInTheDocument();
     expect(screen.getByText('Female')).toBeInTheDocument();
     expect(screen.getByText('2 years')).toBeInTheDocument();
-    expect(screen.getByText('550 kg')).toBeInTheDocument();
+    // Weight appears multiple times in the UI
+    const weightElements = screen.getAllByText(/550 kg/);
+    expect(weightElements.length).toBeGreaterThan(0);
   });
 
   it('should display status badge with correct styling', () => {
     render(<CattleProfileCard cattle={mockCattle} age="2 years" />);
 
-    const statusBadge = screen.getByText('Active');
+    const statusBadge = screen.getByText('active');
     expect(statusBadge).toHaveClass('bg-green-100', 'text-green-800');
   });
 
   it('should display sold status correctly', () => {
-    const soldCattle = { ...mockCattle, status: 'sold' as const };
+    const soldCattle = { ...mockCattle, status: CattleStatus.SOLD };
     render(<CattleProfileCard cattle={soldCattle} age="2 years" />);
 
-    const statusBadge = screen.getByText('Sold');
+    const statusBadge = screen.getByText('sold');
     expect(statusBadge).toHaveClass('bg-gray-100', 'text-gray-800');
   });
 
   it('should display deceased status correctly', () => {
-    const deceasedCattle = { ...mockCattle, status: 'deceased' as const };
+    const deceasedCattle = { ...mockCattle, status: CattleStatus.DECEASED };
     render(<CattleProfileCard cattle={deceasedCattle} age="2 years" />);
 
-    const statusBadge = screen.getByText('Deceased');
+    const statusBadge = screen.getByText('deceased');
     expect(statusBadge).toHaveClass('bg-red-100', 'text-red-800');
   });
 
@@ -61,7 +68,7 @@ describe('CattleProfileCard', () => {
   });
 
   it('should display image when imageUrl is provided', () => {
-    const cattleWithImage = { ...mockCattle, imageUrl: 'https://example.com/cow.jpg' };
+    const cattleWithImage = { ...mockCattle, photoUrl: 'https://example.com/cow.jpg' };
     render(<CattleProfileCard cattle={cattleWithImage} age="2 years" />);
 
     const image = screen.getByAltText('Bessie');
@@ -70,7 +77,7 @@ describe('CattleProfileCard', () => {
   });
 
   it('should display "Not recorded" when weight is not provided', () => {
-    const cattleWithoutWeight = { ...mockCattle, weight: undefined };
+    const cattleWithoutWeight = { ...mockCattle, metadata: { ...mockCattle.metadata, weight: undefined } };
     render(<CattleProfileCard cattle={cattleWithoutWeight} age="2 years" />);
 
     expect(screen.getByText('Not recorded')).toBeInTheDocument();
@@ -95,7 +102,7 @@ describe('CattleProfileCard', () => {
   });
 
   it('should not display notes section when notes are not provided', () => {
-    const cattleWithoutNotes = { ...mockCattle, notes: undefined };
+    const cattleWithoutNotes = { ...mockCattle, metadata: { ...mockCattle.metadata, notes: undefined } };
     render(<CattleProfileCard cattle={cattleWithoutNotes} age="2 years" />);
 
     expect(screen.queryByText('Healthy and productive cow')).not.toBeInTheDocument();

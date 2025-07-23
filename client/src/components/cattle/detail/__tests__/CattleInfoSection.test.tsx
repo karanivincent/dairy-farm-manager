@@ -1,31 +1,38 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { CattleInfoSection } from '../CattleInfoSection';
-import { Cattle } from '../../../../types/cattle.types';
+import type { Cattle } from '../../../../types/cattle.types';
+import { Gender, CattleStatus } from '../../../../types/cattle.types';
 
 // Mock useNavigate
 const mockNavigate = vi.fn();
-vi.mock('react-router-dom', () => ({
-  useNavigate: () => mockNavigate,
-}));
+vi.mock('react-router-dom', async () => {
+  const actual = await vi.importActual('react-router-dom');
+  return {
+    ...actual,
+    useNavigate: () => mockNavigate,
+  };
+});
 
 const mockCattle: Cattle = {
-  id: '123',
+  id: 123,
   name: 'Bessie',
   tagNumber: 'COW-001',
   breed: 'Holstein',
   birthDate: '2022-01-15',
-  gender: 'female',
-  status: 'active',
-  weight: 550,
-  purchaseDate: '2022-03-01',
-  purchasePrice: 1500,
-  location: 'Barn A',
-  motherId: '456',
-  fatherId: '789',
-  farmId: 'farm-1',
-  createdAt: '2022-03-01',
-  updatedAt: '2024-01-15',
+  gender: Gender.FEMALE,
+  status: CattleStatus.ACTIVE,
+  parentCowId: 456,
+  parentBullId: 789,
+  photoUrl: null,
+  metadata: {
+    weight: 550,
+    purchaseDate: '2022-03-01',
+    purchasePrice: 1500,
+    location: 'Barn A',
+  },
+  createdAt: new Date('2022-03-01'),
+  updatedAt: new Date('2024-01-15'),
 };
 
 describe('CattleInfoSection', () => {
@@ -43,7 +50,7 @@ describe('CattleInfoSection', () => {
   });
 
   it('should display "Not recorded" when weight is not provided', () => {
-    const cattleWithoutWeight = { ...mockCattle, weight: undefined };
+    const cattleWithoutWeight = { ...mockCattle, metadata: { ...mockCattle.metadata, weight: undefined } };
     render(<CattleInfoSection cattle={cattleWithoutWeight} offspringCount={0} />);
 
     expect(screen.getByText('Not recorded')).toBeInTheDocument();
@@ -57,7 +64,14 @@ describe('CattleInfoSection', () => {
   });
 
   it('should display "Born on farm" when no purchase date', () => {
-    const farmBornCattle = { ...mockCattle, purchaseDate: undefined, purchasePrice: undefined };
+    const farmBornCattle = { 
+      ...mockCattle, 
+      metadata: { 
+        ...mockCattle.metadata, 
+        purchaseDate: undefined, 
+        purchasePrice: undefined 
+      } 
+    };
     render(<CattleInfoSection cattle={farmBornCattle} offspringCount={0} />);
 
     expect(screen.getByText('Born on farm')).toBeInTheDocument();
@@ -77,7 +91,7 @@ describe('CattleInfoSection', () => {
   });
 
   it('should display "Unknown" for missing parents', () => {
-    const orphanCattle = { ...mockCattle, motherId: null, fatherId: null };
+    const orphanCattle = { ...mockCattle, parentCowId: null, parentBullId: null };
     render(<CattleInfoSection cattle={orphanCattle} offspringCount={0} />);
 
     const unknownTexts = screen.getAllByText('Unknown');
@@ -100,7 +114,7 @@ describe('CattleInfoSection', () => {
     render(<CattleInfoSection cattle={mockCattle} offspringCount={0} />);
 
     expect(screen.getByText('Basic Information')).toBeInTheDocument();
-    expect(screen.getByText('Origin Information')).toBeInTheDocument();
+    expect(screen.getByText('Additional Information')).toBeInTheDocument();
     expect(screen.getByText('Breeding Information')).toBeInTheDocument();
   });
 

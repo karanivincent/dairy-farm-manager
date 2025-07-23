@@ -1,38 +1,49 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { CattleOffspringList } from '../CattleOffspringList';
-import { Cattle } from '../../../../types/cattle.types';
+import type { Cattle } from '../../../../types/cattle.types';
+import { Gender, CattleStatus } from '../../../../types/cattle.types';
 
 // Mock useNavigate
 const mockNavigate = vi.fn();
-vi.mock('react-router-dom', () => ({
-  useNavigate: () => mockNavigate,
-}));
+vi.mock('react-router-dom', async () => {
+  const actual = await vi.importActual('react-router-dom');
+  return {
+    ...actual,
+    useNavigate: () => mockNavigate,
+  };
+});
 
 const mockOffspring: Cattle[] = [
   {
-    id: '1',
+    id: 1,
     name: 'Calf 1',
     tagNumber: 'CALF-001',
     breed: 'Holstein',
     birthDate: '2023-06-01',
-    gender: 'female',
-    status: 'active',
-    farmId: 'farm-1',
-    createdAt: '2023-06-01',
-    updatedAt: '2024-01-15',
+    gender: Gender.FEMALE,
+    status: CattleStatus.ACTIVE,
+    parentCowId: null,
+    parentBullId: null,
+    photoUrl: null,
+    metadata: {},
+    createdAt: new Date('2023-06-01'),
+    updatedAt: new Date('2024-01-15'),
   },
   {
-    id: '2',
+    id: 2,
     name: 'Calf 2',
     tagNumber: 'CALF-002',
     breed: 'Holstein',
     birthDate: '2023-08-15',
-    gender: 'male',
-    status: 'sold',
-    farmId: 'farm-1',
-    createdAt: '2023-08-15',
-    updatedAt: '2024-01-15',
+    gender: Gender.MALE,
+    status: CattleStatus.SOLD,
+    parentCowId: null,
+    parentBullId: null,
+    photoUrl: null,
+    metadata: {},
+    createdAt: new Date('2023-08-15'),
+    updatedAt: new Date('2024-01-15'),
   },
 ];
 
@@ -115,9 +126,10 @@ describe('CattleOffspringList', () => {
       ...mockOffspring,
       {
         ...mockOffspring[0],
-        id: '3',
+        id: 3,
         name: 'Calf 3',
-        status: 'deceased' as const,
+        tagNumber: 'CALF-003',
+        status: CattleStatus.DECEASED,
       },
     ];
 

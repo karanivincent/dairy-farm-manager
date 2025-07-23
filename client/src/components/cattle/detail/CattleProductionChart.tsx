@@ -24,7 +24,7 @@ export function CattleProductionChart({ productions }: CattleProductionChartProp
   const avgProduction = totalProduction / productions.length;
   
   // Get recent productions (last 10)
-  const recentProductions = productions.slice(-10).reverse();
+  const recentProductions = productions.slice(0, 10);
 
   return (
     <div className="bg-white rounded-lg shadow-sm border p-6">
@@ -90,13 +90,8 @@ export function CattleProductionChart({ productions }: CattleProductionChartProp
               </div>
               <div className="text-right">
                 <p className="font-semibold text-gray-900">
-                  {production.quantity?.toFixed(1)} L
+                  {(production.quantity || 0).toFixed(1)} L
                 </p>
-                {production.quality && (
-                  <p className="text-sm text-gray-600">
-                    Quality: {production.quality}
-                  </p>
-                )}
               </div>
             </div>
           ))}

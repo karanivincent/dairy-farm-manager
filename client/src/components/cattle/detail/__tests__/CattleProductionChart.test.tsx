@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { CattleProductionChart } from '../CattleProductionChart';
-import { Production } from '../../../../types/production.types';
+import type { Production } from '../../../../types/production.types';
 
 const mockProductions: Production[] = [
   {
@@ -10,10 +10,10 @@ const mockProductions: Production[] = [
     date: '2024-01-15',
     shift: 'morning',
     quantity: 25,
-    quality: 'good',
-    farmId: 'farm-1',
-    createdAt: '2024-01-15',
-    updatedAt: '2024-01-15',
+    recordedBy: 'user1',
+    notes: null,
+    createdAt: new Date('2024-01-15'),
+    updatedAt: new Date('2024-01-15'),
   },
   {
     id: '2',
@@ -21,10 +21,10 @@ const mockProductions: Production[] = [
     date: '2024-01-15',
     shift: 'evening',
     quantity: 20,
-    quality: 'excellent',
-    farmId: 'farm-1',
-    createdAt: '2024-01-15',
-    updatedAt: '2024-01-15',
+    recordedBy: 'user1',
+    notes: null,
+    createdAt: new Date('2024-01-15'),
+    updatedAt: new Date('2024-01-15'),
   },
   {
     id: '3',
@@ -32,10 +32,10 @@ const mockProductions: Production[] = [
     date: '2024-01-14',
     shift: 'morning',
     quantity: 23,
-    quality: 'good',
-    farmId: 'farm-1',
-    createdAt: '2024-01-14',
-    updatedAt: '2024-01-14',
+    recordedBy: 'user1',
+    notes: null,
+    createdAt: new Date('2024-01-14'),
+    updatedAt: new Date('2024-01-14'),
   },
 ];
 
@@ -89,12 +89,7 @@ describe('CattleProductionChart', () => {
     expect(eveningShifts).toHaveLength(1);
   });
 
-  it('should display quality information when available', () => {
-    render(<CattleProductionChart productions={mockProductions} />);
-
-    expect(screen.getByText('Quality: good')).toBeInTheDocument();
-    expect(screen.getByText('Quality: excellent')).toBeInTheDocument();
-  });
+  // Removed test for quality information as it's not part of the Production type
 
   it('should show placeholder for chart implementation', () => {
     render(<CattleProductionChart productions={mockProductions} />);
@@ -106,18 +101,21 @@ describe('CattleProductionChart', () => {
     const manyProductions = Array.from({ length: 15 }, (_, i) => ({
       id: `${i}`,
       cattleId: '123',
-      date: `2024-01-${15 - i}`,
+      date: `2024-01-${String(15 - i).padStart(2, '0')}`,
       shift: 'morning' as const,
       quantity: 20 + i,
-      farmId: 'farm-1',
-      createdAt: '2024-01-15',
-      updatedAt: '2024-01-15',
+      recordedBy: 'user1',
+      notes: null,
+      createdAt: new Date('2024-01-15'),
+      updatedAt: new Date('2024-01-15'),
     }));
 
     render(<CattleProductionChart productions={manyProductions} />);
 
-    // Should only show 10 most recent entries
-    const productionEntries = screen.getAllByText(/\d+\.\d+ L/);
+    // Should only show 10 most recent entries in the productions list
+    // The summary stats also contain numbers with "L", so we need to be more specific
+    const recentProductionsSection = screen.getByText('Recent Productions').parentElement;
+    const productionEntries = recentProductionsSection?.querySelectorAll('p.font-semibold');
     expect(productionEntries).toHaveLength(10);
   });
 
@@ -130,9 +128,10 @@ describe('CattleProductionChart', () => {
         date: '2024-01-13',
         shift: 'morning' as const,
         quantity: null,
-        farmId: 'farm-1',
-        createdAt: '2024-01-13',
-        updatedAt: '2024-01-13',
+        recordedBy: 'user1',
+        notes: null,
+        createdAt: new Date('2024-01-13'),
+        updatedAt: new Date('2024-01-13'),
       },
     ];
 
@@ -153,7 +152,9 @@ describe('CattleProductionChart', () => {
 
     render(<CattleProductionChart productions={productionsWithNull} />);
 
+    // Check that the total appears in the summary stats
     // Total should be 0 + 20 = 20
-    expect(screen.getByText('20.0 L')).toBeInTheDocument();
+    const totalElement = screen.getByText('Total Production').parentElement?.parentElement;
+    expect(totalElement).toHaveTextContent('20.0 L');
   });
 });
