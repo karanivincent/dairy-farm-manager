@@ -48,6 +48,12 @@ declare global {
        * @example cy.cleanupTestData()
        */
       cleanupTestData(): Chainable<void>
+
+      /**
+       * Custom command to make authenticated API requests
+       * @example cy.authenticatedRequest({ method: 'POST', url: '/cattle', body: {...} })
+       */
+      authenticatedRequest(options: Partial<Cypress.RequestOptions>): Chainable<Cypress.Response<any>>
     }
   }
 }
@@ -100,6 +106,25 @@ Cypress.Commands.add('seedTestData', () => {
 Cypress.Commands.add('cleanupTestData', () => {
   // This would typically make API calls to clean up test data
   cy.log('Cleaning up test data...');
+});
+
+// Authenticated request command
+Cypress.Commands.add('authenticatedRequest', (options: Partial<Cypress.RequestOptions>) => {
+  return cy.window().then((win) => {
+    const authData = JSON.parse(win.localStorage.getItem('auth-storage') || '{}');
+    const token = authData?.state?.token;
+    
+    return cy.request({
+      ...options,
+      url: options.url?.startsWith('http') 
+        ? options.url 
+        : `${Cypress.env('apiUrl') || 'http://localhost:3000/api/v1'}${options.url}`,
+      headers: {
+        ...options.headers,
+        Authorization: `Bearer ${token}`,
+      },
+    });
+  });
 });
 
 export {};

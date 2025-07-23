@@ -62,9 +62,13 @@ describe('Add Cattle', () => {
       const duplicateTag = `DUP-${timestamp}`;
       
       // First add a cattle
-      cy.request('POST', `${Cypress.env('apiUrl')}/cattle`, {
-        ...cattle.validCattle,
-        tagNumber: duplicateTag
+      cy.authenticatedRequest({
+        method: 'POST',
+        url: '/cattle',
+        body: {
+          ...cattle.validCattle,
+          tagNumber: duplicateTag
+        }
       });
       
       // Try to add another with same tag
@@ -105,8 +109,16 @@ describe('Add Cattle', () => {
         gender: 'male'
       };
       
-      cy.request('POST', `${Cypress.env('apiUrl')}/cattle`, mother);
-      cy.request('POST', `${Cypress.env('apiUrl')}/cattle`, father);
+      cy.authenticatedRequest({
+        method: 'POST',
+        url: '/cattle',
+        body: mother
+      });
+      cy.authenticatedRequest({
+        method: 'POST',
+        url: '/cattle',
+        body: father
+      });
       
       // Fill in cattle details
       cy.get('input[name="name"]').type('Baby Calf');

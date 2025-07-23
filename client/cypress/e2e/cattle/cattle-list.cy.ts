@@ -21,7 +21,7 @@ describe('Cattle List View', () => {
   });
 
   it('should show empty state when no cattle exists', () => {
-    cy.contains('No cattle found').should('be.visible');
+    cy.contains('No cattle yet').should('be.visible');
     cy.contains('Add your first cattle to get started').should('be.visible');
   });
 
@@ -35,9 +35,13 @@ describe('Cattle List View', () => {
     cy.fixture('cattle').then((cattle) => {
       // Add multiple cattle via API
       cattle.bulkCattle.forEach((cow: any) => {
-        cy.request('POST', `${Cypress.env('apiUrl')}/cattle`, {
-          ...cow,
-          tagNumber: cow.tagNumber + Date.now()
+        cy.authenticatedRequest({
+          method: 'POST',
+          url: '/cattle',
+          body: {
+            ...cow,
+            tagNumber: cow.tagNumber + Date.now()
+          }
         });
       });
     });
@@ -45,8 +49,15 @@ describe('Cattle List View', () => {
     // Refresh to see the cattle
     cy.reload();
     
+    // Wait for cattle to load after refresh
+    cy.contains('3 cattle in your inventory', { timeout: 10000 }).should('be.visible');
+    
     // Search for specific cattle
     cy.get('[data-testid="cattle-search"]').type('Daisy');
+    
+    // Wait for search results
+    cy.wait(500); // Allow debounce to complete
+    
     cy.get('[data-testid="cattle-card"]').should('have.length', 1);
     cy.contains('Daisy').should('be.visible');
   });
@@ -57,18 +68,26 @@ describe('Cattle List View', () => {
       const timestamp = Date.now();
       
       // Add active cattle
-      cy.request('POST', `${Cypress.env('apiUrl')}/cattle`, {
-        ...cattle.validCattle,
-        tagNumber: `ACTIVE-${timestamp}`,
-        status: 'active'
+      cy.authenticatedRequest({
+        method: 'POST',
+        url: '/cattle',
+        body: {
+          ...cattle.validCattle,
+          tagNumber: `ACTIVE-${timestamp}`,
+          status: 'active'
+        }
       });
       
       // Add sold cattle
-      cy.request('POST', `${Cypress.env('apiUrl')}/cattle`, {
-        ...cattle.validCattle,
-        name: 'Sold Cow',
-        tagNumber: `SOLD-${timestamp}`,
-        status: 'sold'
+      cy.authenticatedRequest({
+        method: 'POST',
+        url: '/cattle',
+        body: {
+          ...cattle.validCattle,
+          name: 'Sold Cow',
+          tagNumber: `SOLD-${timestamp}`,
+          status: 'sold'
+        }
       });
     });
     
@@ -91,18 +110,26 @@ describe('Cattle List View', () => {
       const timestamp = Date.now();
       
       // Add female cattle
-      cy.request('POST', `${Cypress.env('apiUrl')}/cattle`, {
-        ...cattle.validCattle,
-        tagNumber: `FEMALE-${timestamp}`,
-        gender: 'female'
+      cy.authenticatedRequest({
+        method: 'POST',
+        url: '/cattle',
+        body: {
+          ...cattle.validCattle,
+          tagNumber: `FEMALE-${timestamp}`,
+          gender: 'female'
+        }
       });
       
       // Add male cattle
-      cy.request('POST', `${Cypress.env('apiUrl')}/cattle`, {
-        ...cattle.validCattle,
-        name: 'Bull',
-        tagNumber: `MALE-${timestamp}`,
-        gender: 'male'
+      cy.authenticatedRequest({
+        method: 'POST',
+        url: '/cattle',
+        body: {
+          ...cattle.validCattle,
+          name: 'Bull',
+          tagNumber: `MALE-${timestamp}`,
+          gender: 'male'
+        }
       });
     });
     
@@ -130,7 +157,11 @@ describe('Cattle List View', () => {
       ];
       
       cattleData.forEach(cow => {
-        cy.request('POST', `${Cypress.env('apiUrl')}/cattle`, cow);
+        cy.authenticatedRequest({
+          method: 'POST',
+          url: '/cattle',
+          body: cow
+        });
       });
     });
     
@@ -154,9 +185,13 @@ describe('Cattle List View', () => {
     // Add some cattle first
     cy.fixture('cattle').then((cattle) => {
       cattle.bulkCattle.forEach((cow: any) => {
-        cy.request('POST', `${Cypress.env('apiUrl')}/cattle`, {
-          ...cow,
-          tagNumber: cow.tagNumber + Date.now()
+        cy.authenticatedRequest({
+          method: 'POST',
+          url: '/cattle',
+          body: {
+            ...cow,
+            tagNumber: cow.tagNumber + Date.now()
+          }
         });
       });
     });
@@ -179,9 +214,13 @@ describe('Cattle List View', () => {
     // Add a cattle
     cy.fixture('cattle').then((cattle) => {
       const timestamp = Date.now();
-      cy.request('POST', `${Cypress.env('apiUrl')}/cattle`, {
-        ...cattle.validCattle,
-        tagNumber: `DETAIL-${timestamp}`
+      cy.authenticatedRequest({
+        method: 'POST',
+        url: '/cattle',
+        body: {
+          ...cattle.validCattle,
+          tagNumber: `DETAIL-${timestamp}`
+        }
       }).then((response) => {
         cy.reload();
         
@@ -201,10 +240,14 @@ describe('Cattle List View', () => {
       
       for (let i = 0; i < 15; i++) {
         promises.push(
-          cy.request('POST', `${Cypress.env('apiUrl')}/cattle`, {
-            ...cattle.validCattle,
-            name: `Cow ${i}`,
-            tagNumber: `PAGE-${timestamp}-${i}`
+          cy.authenticatedRequest({
+            method: 'POST',
+            url: '/cattle',
+            body: {
+              ...cattle.validCattle,
+              name: `Cow ${i}`,
+              tagNumber: `PAGE-${timestamp}-${i}`
+            }
           })
         );
       }

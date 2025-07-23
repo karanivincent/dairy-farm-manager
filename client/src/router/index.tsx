@@ -34,6 +34,18 @@ const router = createBrowserRouter([
         element: <CattleListPage />,
       },
       {
+        path: 'cattle/add',
+        element: <div>Add Cattle Page (To be implemented)</div>,
+      },
+      {
+        path: 'cattle/:id',
+        element: <div>Cattle Detail Page (To be implemented)</div>,
+      },
+      {
+        path: 'cattle/:id/edit',
+        element: <div>Edit Cattle Page (To be implemented)</div>,
+      },
+      {
         path: 'production',
         element: <ProductionListPage />,
       },
