@@ -1,4 +1,4 @@
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import {
   HomeIcon,
   UsersIcon,
@@ -17,9 +17,11 @@ const navigation = [
 
 export function Sidebar() {
   const { user, logout } = useAuthStore();
+  const navigate = useNavigate();
 
   const handleLogout = () => {
     logout();
+    navigate('/login');
   };
 
   return (
@@ -53,7 +55,7 @@ export function Sidebar() {
 
       {/* User Profile & Logout */}
       <div className="p-4 border-t border-gray-200">
-        <div className="flex items-center mb-4">
+        <div className="flex items-center mb-4" data-testid="user-menu-button">
           <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
             <span className="text-white font-medium text-sm">
               {user?.firstName?.[0]}{user?.lastName?.[0]}
@@ -71,10 +73,11 @@ export function Sidebar() {
         
         <button
           onClick={handleLogout}
+          data-testid="logout-button"
           className="w-full flex items-center px-4 py-2 text-sm text-gray-600 hover:bg-gray-50 hover:text-gray-900 rounded-lg transition-colors"
         >
           <ArrowLeftOnRectangleIcon className="w-4 h-4 mr-2" />
-          Sign Out
+          Logout
         </button>
       </div>
     </div>

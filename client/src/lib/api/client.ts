@@ -60,8 +60,9 @@ class ApiClient {
         if (response?.status === 401) {
           const authStore = useAuthStore.getState();
           const refreshToken = authStore.refreshToken;
-
-          if (refreshToken && !error.config._retry) {
+          
+          // Only try to refresh if we have tokens (user is logged in)
+          if (refreshToken && authStore.token && !error.config._retry) {
             error.config._retry = true;
 
             try {
@@ -83,11 +84,8 @@ class ApiClient {
               authStore.logout();
               throw new Error('Session expired - please login again');
             }
-          } else {
-            // No refresh token or refresh already failed
-            useAuthStore.getState().logout();
-            throw new Error('Unauthorized - please login again');
           }
+          // For login attempts or when no tokens exist, fall through to normal error handling
         }
 
         // Handle other HTTP errors
@@ -96,7 +94,9 @@ class ApiClient {
         }
 
         if (response?.status >= 400) {
-          const message = response.data?.message || 'Client error occurred';
+          const message = Array.isArray(response.data?.message) 
+            ? response.data.message[0] 
+            : response.data?.message || 'Client error occurred';
           throw new Error(message);
         }
 

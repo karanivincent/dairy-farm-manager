@@ -18,6 +18,7 @@ type LoginForm = z.infer<typeof loginSchema>;
 
 export function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
+  const [loginError, setLoginError] = useState<string | null>(null);
   const navigate = useNavigate();
   const location = useLocation();
   const { setUser, setTokens } = useAuthStore();
@@ -35,13 +36,16 @@ export function LoginPage() {
   const loginMutation = useMutation({
     mutationFn: authApi.login,
     onSuccess: (data) => {
+      setLoginError(null);
       setUser(data.user);
       setTokens(data.accessToken, data.refreshToken);
       toast.success(`Welcome back, ${data.user.firstName}!`);
       navigate(from, { replace: true });
     },
     onError: (error: any) => {
-      toast.error(error.message || 'Login failed');
+      const errorMessage = error.message || 'Login failed';
+      setLoginError(errorMessage);
+      toast.error(errorMessage);
     },
   });
 
@@ -60,6 +64,12 @@ export function LoginPage() {
             Daily Farm Manager
           </p>
         </div>
+
+        {loginError && (
+          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
+            {loginError}
+          </div>
+        )}
         
         <form className="mt-8 space-y-6" onSubmit={handleSubmit(onSubmit)}>
           <div className="space-y-4">

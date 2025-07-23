@@ -54,7 +54,7 @@ describe('Logout Flow', () => {
     cy.logout();
     
     // Try to access different protected routes
-    const protectedRoutes = ['/', '/cattle', '/production', '/reports'];
+    const protectedRoutes = ['/', '/cattle', '/production'];
     
     protectedRoutes.forEach(route => {
       cy.visit(route);

@@ -29,12 +29,16 @@ describe('Login Flow', () => {
 
   it('should login successfully with email', () => {
     cy.fixture('users').then((users) => {
+      const timestamp = Date.now();
+      const uniqueEmail = timestamp + users.validUser.email;
+      const uniqueUsername = users.validUser.username + timestamp;
+      
       // First register a user
       cy.visit('/register');
       cy.get('input[name="firstName"]').type(users.validUser.firstName);
       cy.get('input[name="lastName"]').type(users.validUser.lastName);
-      cy.get('input[name="username"]').type(users.validUser.username + Date.now());
-      cy.get('input[name="email"]').type(Date.now() + users.validUser.email);
+      cy.get('input[name="username"]').type(uniqueUsername);
+      cy.get('input[name="email"]').type(uniqueEmail);
       cy.get('input[name="password"]').type(users.validUser.password);
       cy.get('input[name="confirmPassword"]').type(users.validUser.password);
       cy.get('button[type="submit"]').click();
@@ -45,8 +49,8 @@ describe('Login Flow', () => {
       // Logout
       cy.logout();
       
-      // Now test login
-      cy.get('input[name="emailOrUsername"]').type(Date.now() + users.validUser.email);
+      // Now test login with email
+      cy.get('input[name="emailOrUsername"]').type(uniqueEmail);
       cy.get('input[name="password"]').type(users.validUser.password);
       cy.get('button[type="submit"]').click();
       
