@@ -83,6 +83,32 @@ export class CattleController {
     return this.cattleService.getActiveMilkingCows();
   }
 
+  @Get('check-tag/:tagNumber')
+  @ApiOperation({ summary: 'Check if tag number exists' })
+  @ApiResponse({
+    status: 200,
+    description: 'Tag number check result',
+    schema: {
+      type: 'object',
+      properties: {
+        exists: {
+          type: 'boolean',
+          description: 'Whether the tag number already exists',
+        },
+      },
+    },
+  })
+  async checkTagNumber(
+    @Param('tagNumber') tagNumber: string,
+  ): Promise<{ exists: boolean }> {
+    try {
+      await this.cattleService.findByTagNumber(tagNumber);
+      return { exists: true };
+    } catch (error) {
+      return { exists: false };
+    }
+  }
+
   @Get('tag/:tagNumber')
   @ApiOperation({ summary: 'Get cattle by tag number' })
   @ApiResponse({

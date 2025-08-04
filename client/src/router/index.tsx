@@ -7,6 +7,7 @@ import { DashboardPage } from '../pages/DashboardPage';
 import { CattleListPage } from '../pages/cattle/CattleListPage';
 import { AddCattlePage } from '../pages/cattle/AddCattlePage';
 import { CattleDetailPage } from '../pages/cattle/CattleDetailPage';
+import { EditCattlePage } from '../pages/cattle/EditCattlePage';
 import { ProductionListPage } from '../pages/production/ProductionListPage';
 import { NotFoundPage } from '../pages/NotFoundPage';
 
@@ -45,7 +46,7 @@ const router = createBrowserRouter([
       },
       {
         path: 'cattle/:id/edit',
-        element: <div>Edit Cattle Page (To be implemented)</div>,
+        element: <EditCattlePage />,
       },
       {
         path: 'production',

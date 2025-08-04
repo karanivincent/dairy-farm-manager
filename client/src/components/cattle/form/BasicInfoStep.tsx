@@ -3,8 +3,11 @@ import { Gender } from '../../../types/cattle.types';
 import { useQuery } from '@tanstack/react-query';
 import { cattleApi } from '../../../lib/api/cattle.api';
 import { ExclamationCircleIcon } from '@heroicons/react/24/outline';
+import { useLocation } from 'react-router-dom';
 
 export function BasicInfoStep() {
+  const location = useLocation();
+  const isEditMode = location.pathname.includes('/edit');
   const {
     register,
     formState: { errors },
@@ -14,11 +17,11 @@ export function BasicInfoStep() {
   const tagNumber = watch('tagNumber');
   const birthDate = watch('birthDate');
 
-  // Check for duplicate tag number
+  // Check for duplicate tag number (only in add mode)
   const { data: tagCheckData } = useQuery({
     queryKey: ['cattle', 'check-tag', tagNumber],
     queryFn: () => cattleApi.checkTagNumber(tagNumber),
-    enabled: !!tagNumber && tagNumber.length > 0,
+    enabled: !isEditMode && !!tagNumber && tagNumber.length > 0,
     staleTime: 0,
   });
 

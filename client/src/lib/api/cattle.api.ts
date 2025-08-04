@@ -45,7 +45,7 @@ export const cattleApi = {
 
   // Update cattle
   async update(id: number, data: UpdateCattleDto): Promise<Cattle> {
-    return apiClient.put(`/cattle/${id}`, data);
+    return apiClient.patch(`/cattle/${id}`, data);
   },
 
   // Update cattle status

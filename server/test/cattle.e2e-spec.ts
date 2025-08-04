@@ -471,6 +471,215 @@ describe('Cattle (e2e)', () => {
     });
   });
 
+  describe('/cattle/:id (PATCH) - Enhanced Edit Tests', () => {
+    let cattleId: number;
+    let parentBullId: number;
+    let parentCowId: number;
+
+    beforeEach(async () => {
+      // Create parent cattle
+      const parentBull = cattleRepository.create({
+        tagNumber: 'BULL-001',
+        name: 'Thunder',
+        gender: Gender.MALE,
+        status: CattleStatus.ACTIVE,
+      });
+      const savedBull = await cattleRepository.save(parentBull);
+      parentBullId = savedBull.id;
+
+      const parentCow = cattleRepository.create({
+        tagNumber: 'COW-002',
+        name: 'Daisy',
+        gender: Gender.FEMALE,
+        status: CattleStatus.ACTIVE,
+      });
+      const savedCow = await cattleRepository.save(parentCow);
+      parentCowId = savedCow.id;
+
+      // Create test cattle with all fields
+      const cattle = cattleRepository.create({
+        tagNumber: 'COW-001',
+        name: 'Bella',
+        gender: Gender.FEMALE,
+        status: CattleStatus.ACTIVE,
+        weight: 650,
+        breed: 'Holstein',
+        birthDate: new Date('2022-01-15'),
+        parentBullId: parentBullId,
+        parentCowId: parentCowId,
+        metadata: {
+          birthWeight: 35.5,
+          birthType: 'single',
+          healthNotes: 'Healthy calf',
+        },
+      });
+
+      const savedCattle = await cattleRepository.save(cattle);
+      cattleId = savedCattle.id;
+    });
+
+    it('should update cattle with all fields including metadata', () => {
+      const updateData = {
+        name: 'Updated Bella',
+        tagNumber: 'COW-001-UPDATED',
+        weight: 700,
+        breed: 'Jersey',
+        birthDate: '2022-01-20',
+        metadata: {
+          birthWeight: 36.0,
+          birthType: 'twin',
+          healthNotes: 'Updated health notes',
+        },
+      };
+
+      return request(app.getHttpServer())
+        .patch(`/cattle/${cattleId}`)
+        .set('Authorization', `Bearer ${authToken}`)
+        .send(updateData)
+        .expect(200)
+        .expect((res) => {
+          expect(res.body).toMatchObject({
+            id: cattleId,
+            name: 'Updated Bella',
+            tagNumber: 'COW-001-UPDATED',
+            weight: 700,
+            breed: 'Jersey',
+            metadata: expect.objectContaining({
+              birthWeight: 36.0,
+              birthType: 'twin',
+              healthNotes: 'Updated health notes',
+            }),
+          });
+        });
+    });
+
+    it('should handle optional fields with empty strings by converting to null/undefined', () => {
+      const updateData = {
+        name: 'Bella Updated',
+        breed: '',
+        birthDate: '',
+        parentBullId: '',
+        parentCowId: '',
+        metadata: {
+          birthWeight: '',
+          birthType: '',
+          healthNotes: '',
+        },
+      };
+
+      return request(app.getHttpServer())
+        .patch(`/cattle/${cattleId}`)
+        .set('Authorization', `Bearer ${authToken}`)
+        .send(updateData)
+        .expect(200)
+        .expect((res) => {
+          expect(res.body.name).toBe('Bella Updated');
+          // Empty strings should be converted to null/undefined
+          expect(res.body.breed).toBeNull();
+          expect(res.body.birthDate).toBeNull();
+          expect(res.body.parentBullId).toBeNull();
+          expect(res.body.parentCowId).toBeNull();
+        });
+    });
+
+    it('should handle partial updates without affecting existing fields', () => {
+      const updateData = {
+        name: 'Partially Updated Bella',
+      };
+
+      return request(app.getHttpServer())
+        .patch(`/cattle/${cattleId}`)
+        .set('Authorization', `Bearer ${authToken}`)
+        .send(updateData)
+        .expect(200)
+        .expect((res) => {
+          expect(res.body).toMatchObject({
+            id: cattleId,
+            name: 'Partially Updated Bella',
+            tagNumber: 'COW-001', // Should remain unchanged
+            gender: Gender.FEMALE, // Should remain unchanged
+            breed: 'Holstein', // Should remain unchanged
+            parentBullId: parentBullId, // Should remain unchanged
+            parentCowId: parentCowId, // Should remain unchanged
+          });
+          expect(res.body.metadata).toMatchObject({
+            birthWeight: 35.5,
+            birthType: 'single',
+            healthNotes: 'Healthy calf',
+          });
+        });
+    });
+
+    it('should update parent relationships', () => {
+      const updateData = {
+        parentBullId: null,
+        parentCowId: null,
+      };
+
+      return request(app.getHttpServer())
+        .patch(`/cattle/${cattleId}`)
+        .set('Authorization', `Bearer ${authToken}`)
+        .send(updateData)
+        .expect(200)
+        .expect((res) => {
+          expect(res.body.parentBullId).toBeNull();
+          expect(res.body.parentCowId).toBeNull();
+        });
+    });
+
+    it('should validate numeric fields in metadata', () => {
+      const updateData = {
+        metadata: {
+          birthWeight: 'not-a-number',
+        },
+      };
+
+      return request(app.getHttpServer())
+        .patch(`/cattle/${cattleId}`)
+        .set('Authorization', `Bearer ${authToken}`)
+        .send(updateData)
+        .expect(400); // Bad Request due to validation
+    });
+
+    it('should allow updating with same tag number', () => {
+      const updateData = {
+        tagNumber: 'COW-001', // Same as current
+        name: 'Same Tag Update',
+      };
+
+      return request(app.getHttpServer())
+        .patch(`/cattle/${cattleId}`)
+        .set('Authorization', `Bearer ${authToken}`)
+        .send(updateData)
+        .expect(200)
+        .expect((res) => {
+          expect(res.body.tagNumber).toBe('COW-001');
+          expect(res.body.name).toBe('Same Tag Update');
+        });
+    });
+
+    it('should reject duplicate tag number from another cattle', async () => {
+      // Create another cattle
+      const anotherCattle = cattleRepository.create({
+        tagNumber: 'COW-003',
+        name: 'Another Cow',
+        gender: Gender.FEMALE,
+        status: CattleStatus.ACTIVE,
+      });
+      await cattleRepository.save(anotherCattle);
+
+      const updateData = {
+        tagNumber: 'COW-003', // Try to use existing tag from another cattle
+      };
+
+      return request(app.getHttpServer())
+        .patch(`/cattle/${cattleId}`)
+        .set('Authorization', `Bearer ${authToken}`)
+        .send(updateData)
+        .expect(409); // Conflict
+    });
+  });
+
   describe('/cattle/:id/status (PATCH)', () => {
     let cattleId: number;
 

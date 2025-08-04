@@ -160,7 +160,7 @@ export function BreedingDetailsStep() {
           id="birthWeight"
           step="0.1"
           min="0"
-          {...register('birthWeight', { valueAsNumber: true })}
+          {...register('birthWeight')}
           className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 sm:text-sm"
           placeholder="e.g., 35.5"
         />

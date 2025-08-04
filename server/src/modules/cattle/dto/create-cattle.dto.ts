@@ -11,7 +11,7 @@ import {
   Max,
   IsObject,
 } from 'class-validator';
-import { Type } from 'class-transformer';
+import { Type, Transform } from 'class-transformer';
 import { Gender, CattleStatus } from '../entities/cattle.entity';
 
 export class CreateCattleDto {
@@ -39,6 +39,7 @@ export class CreateCattleDto {
     maxLength: 50,
   })
   @IsOptional()
+  @Transform(({ value }) => value === '' ? undefined : value)
   @IsString()
   @Length(1, 50)
   breed?: string;
@@ -48,6 +49,7 @@ export class CreateCattleDto {
     example: '2020-05-15',
   })
   @IsOptional()
+  @Transform(({ value }) => value === '' ? undefined : value)
   @IsDateString()
   birthDate?: string;
 
@@ -94,6 +96,7 @@ export class CreateCattleDto {
     example: 'High milk producer, gentle temperament',
   })
   @IsOptional()
+  @Transform(({ value }) => value === '' ? undefined : value)
   @IsString()
   notes?: string;
 
@@ -102,8 +105,9 @@ export class CreateCattleDto {
     example: 1,
   })
   @IsOptional()
-  @IsNumber()
+  @Transform(({ value }) => value === '' || value === null ? undefined : value)
   @Type(() => Number)
+  @IsNumber()
   parentBullId?: number;
 
   @ApiPropertyOptional({
@@ -111,8 +115,9 @@ export class CreateCattleDto {
     example: 2,
   })
   @IsOptional()
-  @IsNumber()
+  @Transform(({ value }) => value === '' || value === null ? undefined : value)
   @Type(() => Number)
+  @IsNumber()
   parentCowId?: number;
 
   @ApiPropertyOptional({
